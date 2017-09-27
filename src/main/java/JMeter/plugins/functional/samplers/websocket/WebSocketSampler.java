@@ -36,6 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
@@ -149,7 +151,11 @@ public class WebSocketSampler extends AbstractSampler implements TestStateListen
                 errorList.append(" - Connection couldn't be opened").append("\n");
                 return sampleResult;
             }
-            
+
+            TimerTask heartbeatTask = new WebSocketHeartbeatTask(socket);
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(heartbeatTask, 0, 15000);
+
             //Send message only if it is not empty
             if (!payloadMessage.isEmpty()) {
                 socket.sendMessage(payloadMessage);
