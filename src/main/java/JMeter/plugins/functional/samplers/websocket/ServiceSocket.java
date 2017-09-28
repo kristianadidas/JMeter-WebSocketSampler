@@ -27,6 +27,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
@@ -50,6 +52,7 @@ public class ServiceSocket {
     protected Pattern responseExpression;
     protected Pattern disconnectExpression;
     protected boolean connected = false;
+    private Timer timer = new Timer();
 
     public ServiceSocket(WebSocketSampler parent, WebSocketClient client) {
         this.parent = parent;
@@ -119,6 +122,9 @@ public class ServiceSocket {
         this.session = session;
         connected = true;
         openLatch.countDown();
+
+        TimerTask heartbeatTask = new WebSocketHeartbeatTask(this);
+        timer.scheduleAtFixedRate(heartbeatTask, 0, 15000);
     }
 
     @OnWebSocketClose
@@ -136,6 +142,9 @@ public class ServiceSocket {
         openLatch.countDown();
         closeLatch.countDown();
         connected = false;
+
+        timer.cancel();
+        timer.purge();
     }
 
     /**

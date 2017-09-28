@@ -26,6 +26,7 @@ public class WebSocketHeartbeatTask extends TimerTask {
             socket.sendMessage("heartbeat");
         }
         catch (Exception e) {
+            log.info(e.getMessage());
             log.info("Heartbeat missed");
         }
 
