@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +41,7 @@ public class ServiceSocket {
     protected final WebSocketSampler parent;
     protected WebSocketClient client;
     private static final Logger log = LoggingManager.getLoggerForClass();
-    protected Queue responeBacklog = new ConcurrentLinkedQueue();
+    protected Deque<String> responeBacklog = new ConcurrentLinkedDeque<>();
     protected Integer error = 0;
     protected StringBuffer logMessage = new StringBuffer();
     protected CountDownLatch openLatch = new CountDownLatch(1);
